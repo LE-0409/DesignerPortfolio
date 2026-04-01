@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio</title>
+
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="portfolio.css">
+<link href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/static/woff2/SUIT.css" rel="stylesheet">
+
+<style>
+
+/* 캐러셀 영역만 스타일 */
+
+.portfolio{
+width:100%;
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+perspective:1200px;
+}
+
+.carousel{
+display:flex;
+align-items:center;
+position:relative;
+cursor:grab;
+user-select:none;
+}
+
+.card{
+width:900px;
+height:480px;
+background:linear-gradient(135deg,#294a7a,#2f5ed7);
+border-radius:30px;
+flex-shrink:0;
+margin:0 -250px;
+transition:transform .4s ease, opacity .4s ease;
+box-shadow:0 40px 80px rgba(0,0,0,.6);
+}
+
+.card.center{
+transform:scale(1.1);
+z-index:5;
+}
+
+.card.side{
+transform:scale(.9);
+opacity:.8;
+z-index:3;
+}
+
+.card.back{
+transform:scale(.75);
+opacity:.4;
+z-index:1;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<input type="checkbox" id="menu-toggle">
+
+<header>
+<div class="logo">Logo</div>
+
+<label for="menu-toggle" class="menu-btn">
+<span></span>
+<span></span>
+<span></span>
+</label>
+
+</header>
+
+<nav class="side-menu">
+<ul>
+<li><a href="#">PROFILE</a></li>
+<li><a href="#">PORTPOLIO</a></li>
+<li><a href="#">CONTACT</a></li>
+</ul>
+</nav>
+
+<section class="portfolio">
+
+<div class="carousel">
+
+<div class="card"></div>
+<div class="card"></div>
+<div class="card"></div>
+<div class="card"></div>
+<div class="card"></div>
+
+</div>
+
+</section>
+
+<script>
+
+window.addEventListener("load",()=>{
+
+const slider=document.querySelector(".carousel")
+
+let isDown=false
+let startX
+let currentX=0
+let velocity=0
+let lastX=0
+
+// 무한 복제
+const cards=slider.innerHTML
+slider.innerHTML=cards+cards+cards
+
+const width=slider.scrollWidth/3
+currentX=-width
+
+slider.style.transform=`translateX(${currentX}px)`
+
+slider.addEventListener("mousedown",e=>{
+isDown=true
+startX=e.pageX
+lastX=e.pageX
+slider.style.cursor="grabbing"
+})
+
+window.addEventListener("mouseup",()=>{
+isDown=false
+slider.style.cursor="grab"
+})
+
+window.addEventListener("mousemove",e=>{
+
+if(!isDown)return
+
+const dx=e.pageX-lastX
+
+currentX+=dx
+velocity=dx
+
+slider.style.transform=`translateX(${currentX}px)`
+
+lastX=e.pageX
+
+})
+
+function updateScale(){
+
+const cards=document.querySelectorAll(".card")
+const center=window.innerWidth/2
+
+cards.forEach(card=>{
+
+const rect=card.getBoundingClientRect()
+const cardCenter=rect.left+rect.width/2
+const distance=Math.abs(center-cardCenter)
+
+card.classList.remove("center","side","back")
+
+if(distance<200){
+card.classList.add("center")
+}else if(distance<600){
+card.classList.add("side")
+}else{
+card.classList.add("back")
+}
+
+})
+
+}
+
+function animate(){
+
+if(!isDown){
+currentX+=velocity
+velocity*=0.95
+}
+
+const width=slider.scrollWidth/3
+
+if(currentX<-width*2){
+currentX+=width
+}
+
+if(currentX>-width){
+currentX-=width
+}
+
+slider.style.transform=`translateX(${currentX}px)`
+
+updateScale()
+
+requestAnimationFrame(animate)
+
+}
+
+animate()
+
+})
+
+</script>
+
+</body>
+</html>

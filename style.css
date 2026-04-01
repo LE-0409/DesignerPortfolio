@@ -1,0 +1,147 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+font-family: 'SUIT', sans-serif;
+  overflow-x: hidden;
+}
+
+
+.bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 20, 0.5);
+  transition: 0.4s;
+  z-index: -1;
+}
+
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10000;
+}
+
+
+.logo {
+  color: #00cfff;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+
+.menu-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  z-index: 10001;
+}
+
+.menu-btn span {
+  width: 28px;
+  height: 2px;
+  background: #00cfff;
+  display: block;
+  transition: 0.3s;
+}
+
+
+#menu-toggle {
+  display: none;
+}
+
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  right: -260px;
+  width: 260px;
+  height: 100%;
+
+  background: linear-gradient(
+    to left,
+    rgba(0, 0, 0, 0.98) 0%,
+    rgba(0, 0, 0, 0.92) 20%,
+    rgba(0, 0, 0, 0.82) 45%,
+    rgba(0, 0, 0, 0.65) 60%,
+    rgba(0, 0, 0, 0.4) 75%,
+    rgba(0, 0, 0, 0.2) 88%,
+    rgba(0, 0, 0, 0.08) 96%,
+    rgba(0, 0, 0, 0.0) 100%
+  );
+
+  backdrop-filter: blur(10px);
+  padding-top: 90px;
+  transition: 0.4s ease;
+  z-index: 9999;
+}
+
+.side-menu ul {
+  list-style: none;
+  text-align: right;
+  padding-right: 40px;
+}
+
+.side-menu li {
+  margin: 14px 0;
+}
+
+.side-menu a {
+  font-family: 'SUIT', sans-serif;
+  font-weight: 750;
+
+  letter-spacing: 0px;
+  transform: scaleX(0.80);
+  color: #00cfff;
+  text-decoration: none;
+  font-size: 20px;
+
+line-height: 1.4;       
+letter-spacing: 1.5px;
+}
+
+
+#menu-toggle:checked ~ .side-menu {
+  right: 0;
+}
+
+#menu-toggle:checked ~ header .menu-btn span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+#menu-toggle:checked ~ header .menu-btn span:nth-child(2) {
+  opacity: 0;
+}
+
+#menu-toggle:checked ~ header .menu-btn span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+
+#menu-toggle:checked ~ .overlay {
+  background: rgba(0, 0, 20, 0.8);
+}
