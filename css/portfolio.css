@@ -67,6 +67,7 @@
   align-items: center;
   justify-content: center;
   overflow: visible;
+  clip-path: inset(0 -9999px -9999px -9999px);
 }
 
 .cylinder-carousel {
