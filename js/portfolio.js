@@ -2,215 +2,198 @@
   'use strict';
 
   const CARD_W = 500;
-  const CARD_H = 340;
 
-  const carousel = document.getElementById('cylinderCarousel');
-  const modal    = document.getElementById('workModal');
+  const carousel   = document.getElementById('cylinderCarousel');
+  const modal      = document.getElementById('workModal');
   const modalClose = document.getElementById('modalClose');
 
-  let allCards     = [];
-  let visibleCards = [];
-  let currentAngle = 0;
-  let velocity     = 0;
-  let isDragging   = false;
-  let lastX        = 0;
-  let dragDeltaX   = 0;
-  let dragDeltaY   = 0;
-  let touchStartX  = 0;
-  let touchStartY  = 0;
-  let isHorizontalDrag = false;
-  let dragDecided  = false;
+  let allCards      = [];
+  let visibleCards  = [];
   let currentFilter = 'all';
 
   /* ── Cylinder geometry ── */
 
   function calcRadius(n) {
     if (n <= 1) return 0;
-    // Radius so adjacent card edges are separated by ~40px
     return Math.round((CARD_W + 40) / (2 * Math.tan(Math.PI / n)));
   }
 
   function layoutCards(cards) {
-    const n = cards.length;
-    const radius = calcRadius(n);
-    const step   = n > 0 ? 360 / n : 0;
-
-    // Hide all, then show only the filtered set
-    allCards.forEach(c => { c.style.display = 'none'; });
-
-    cards.forEach((card, i) => {
-      card.style.display = '';
-      card.style.transform = `rotateY(${i * step}deg) translateZ(${radius}px)`;
+    const n    = cards.length;
+    const r    = calcRadius(n);
+    const step = n > 0 ? 360 / n : 0;
+    allCards.forEach(c => (c.style.display = 'none'));
+    cards.forEach((c, i) => {
+      c.style.display   = '';
+      c.style.transform = `rotateY(${i * step}deg) translateZ(${r}px)`;
     });
   }
 
-  function updateFacing() {
+  function applyFacing() {
     const n = visibleCards.length;
-    if (n === 0) return;
+    if (!n) return;
     const step = 360 / n;
-
-    visibleCards.forEach((card, i) => {
-      // Angle of this card's face in world space
-      const world = ((currentAngle + i * step) % 360 + 360) % 360;
-      // 0 = facing camera, 180 = facing away
-      const dist  = Math.min(world, 360 - world); // 0..180
-
+    visibleCards.forEach((c, i) => {
+      const world = ((angle + i * step) % 360 + 360) % 360;
+      const dist  = Math.min(world, 360 - world);
       if (dist >= 90) {
-        card.style.opacity       = '0';
-        card.style.pointerEvents = 'none';
+        c.style.opacity       = '0';
+        c.style.pointerEvents = 'none';
+        c.style.filter        = '';
       } else {
-        const t = dist / 90; // 0..1
-        card.style.opacity       = String(1 - t * 0.55);
-        card.style.pointerEvents = dist < 55 ? 'auto' : 'none';
-        card.style.filter        = `brightness(${0.55 + 0.45 * (1 - t)})`;
+        const t = dist / 90;
+        c.style.opacity       = String(1 - t * 0.55);
+        c.style.pointerEvents = dist < 55 ? 'auto' : 'none';
+        c.style.filter        = `brightness(${0.55 + 0.45 * (1 - t)})`;
       }
     });
   }
 
-  function snapToNearest() {
-    const n = visibleCards.length;
-    if (n <= 1) return currentAngle;
-    const step = 360 / n;
-    const snapped = Math.round(currentAngle / step) * step;
-    return ((snapped % 360) + 540) % 360 - 180;
+  /* ── Angle utilities ── */
+
+  const norm = a => ((a % 360) + 540) % 360 - 180;
+
+  function shortDiff(to, from) {
+    let d = to - from;
+    if (d >  180) d -= 360;
+    if (d < -180) d += 360;
+    return d;
   }
 
-  /* ── Animation loop ── */
+  function nearestSnap() {
+    const n = visibleCards.length;
+    if (n <= 1) return angle;
+    const step = 360 / n;
+    return norm(Math.round(angle / step) * step);
+  }
 
-  let targetAngle = 0;
-  let snapping    = false;
+  /* ── Physics / animation loop ── */
 
-  function tick() {
-    if (isDragging) {
-      // Follow pointer directly via dragMove
-    } else if (snapping) {
-      let diff = targetAngle - currentAngle;
-      if (diff >  180) diff -= 360;
-      if (diff < -180) diff += 360;
-      if (Math.abs(diff) < 0.05) {
-        currentAngle = targetAngle;
-        snapping = false;
+  let angle    = 0;     // current rotation, always in [-180, 180)
+  let vel      = 0;     // deg/ms — drives inertia coast
+  let snapGoal = null;  // target angle while snapping (null = not snapping)
+  let prevTs   = null;
+
+  function tick(ts) {
+    const dt = prevTs !== null ? Math.min(ts - prevTs, 50) : 16;
+    prevTs = ts;
+
+    if (snapGoal !== null) {
+      const d = shortDiff(snapGoal, angle);
+      if (Math.abs(d) < 0.05) {
+        angle    = snapGoal;
+        snapGoal = null;
       } else {
-        currentAngle += diff * 0.11;
+        angle = norm(angle + d * 0.15);
       }
-    } else {
-      currentAngle += velocity;
-      velocity *= 0.91;
-      if (Math.abs(velocity) < 0.25) {
-        velocity = 0;
-        const proposed = snapToNearest();
-        let   snapDiff = proposed - currentAngle;
-        if (snapDiff >  180) snapDiff -= 360;
-        if (snapDiff < -180) snapDiff += 360;
-        if (Math.abs(snapDiff) > 0.05) {
-          targetAngle = proposed;
-          snapping = true;
-        }
+    } else if (vel !== 0) {
+      angle = norm(angle + vel * dt);
+      vel  *= Math.pow(0.988, dt);   // frame-rate-independent decay
+      if (Math.abs(vel) < 0.003) {   // ~0.05 deg/frame @60fps
+        vel      = 0;
+        snapGoal = nearestSnap();
       }
     }
 
-    // Normalize to [-180, 180) every frame to prevent angle drift
-    currentAngle = ((currentAngle % 360) + 540) % 360 - 180;
-
-    carousel.style.transform = `rotateY(${currentAngle}deg)`;
-    updateFacing();
+    carousel.style.transform = `rotateY(${angle}deg)`;
+    applyFacing();
     requestAnimationFrame(tick);
   }
 
-  /* ── Drag ── */
+  /* ── Input — Pointer Events API ── */
+  // Uses setPointerCapture so release/cancel are always delivered
+  // CSS touch-action:pan-y lets the browser handle vertical scroll natively
 
-  function dragStart(x) {
-    isDragging = true;
-    snapping   = false;
-    velocity   = 0;
-    lastX      = x;
-    dragDeltaX = 0;
+  let ptrId    = null;  // active pointer id (null = no drag)
+  let ptrLastX = 0;
+  let ptrLastT = 0;
+  let ptrVel   = 0;     // smoothed velocity in deg/ms
+  let ptrMoved = 0;     // total px moved (used by click guard)
+
+  function onPointerDown(e) {
+    if (ptrId !== null) return;                              // ignore extra touches
+    if (e.pointerType === 'mouse' && e.button !== 0) return; // left button only
+    e.preventDefault();
+    carousel.setPointerCapture(e.pointerId);
+
+    ptrId    = e.pointerId;
+    ptrLastX = e.clientX;
+    ptrLastT = e.timeStamp;
+    ptrVel   = 0;
+    ptrMoved = 0;
+
+    vel      = 0;     // stop inertia
+    snapGoal = null;  // cancel snap
+
     carousel.classList.add('grabbing');
   }
 
-  function dragMove(x) {
-    if (!isDragging) return;
-    const dx  = x - lastX;
-    currentAngle += dx * 0.15;
-    velocity      = dx * 0.15;
-    dragDeltaX   += Math.abs(dx);
-    lastX         = x;
+  function onPointerMove(e) {
+    if (e.pointerId !== ptrId) return;
+
+    const dx = e.clientX - ptrLastX;
+    const dt = Math.max(e.timeStamp - ptrLastT, 1);
+
+    angle    = norm(angle + dx * 0.2);
+    ptrVel   = ptrVel * 0.6 + (dx * 0.2 / dt) * 0.4; // exponential moving average
+    ptrMoved += Math.abs(dx);
+
+    ptrLastX = e.clientX;
+    ptrLastT = e.timeStamp;
   }
 
-  function dragEnd() {
-    if (!isDragging) return;
-    isDragging = false;
+  function onPointerUp(e) {
+    if (e.pointerId !== ptrId) return;
+    releaseDrag(false);
+  }
+
+  function onPointerCancel(e) {
+    if (e.pointerId !== ptrId) return;
+    releaseDrag(true);
+  }
+
+  function releaseDrag(cancelled) {
+    lastMoved = ptrMoved;
+    ptrId     = null;
     carousel.classList.remove('grabbing');
-    // velocity from last dragMove drives inertia; tick handles snap naturally
-  }
 
-  // Mouse
-  carousel.addEventListener('mousedown', e => {
-    e.preventDefault();
-    dragStart(e.clientX);
-    dragDeltaX = 0;
-  });
-
-  window.addEventListener('mousemove', e => dragMove(e.clientX));
-  window.addEventListener('mouseup',   () => dragEnd());
-
-  // Touch
-  carousel.addEventListener('touchstart', e => {
-    touchStartX     = e.touches[0].clientX;
-    touchStartY     = e.touches[0].clientY;
-    dragDecided     = false;
-    isHorizontalDrag = false;
-    dragDeltaX      = 0;
-  }, { passive: true });
-
-  carousel.addEventListener('touchmove', e => {
-    const dx = e.touches[0].clientX - touchStartX;
-    const dy = e.touches[0].clientY - touchStartY;
-
-    if (!dragDecided) {
-      dragDecided = true;
-      isHorizontalDrag = Math.abs(dx) > Math.abs(dy);
-      if (isHorizontalDrag) dragStart(touchStartX);
+    if (cancelled) {
+      vel      = 0;
+      snapGoal = nearestSnap();
+      return;
     }
 
-    if (!isHorizontalDrag) return;
-    e.preventDefault();
-    dragMove(e.touches[0].clientX);
-  }, { passive: false });
+    vel = ptrVel;
+    if (Math.abs(vel) < 0.003) {
+      vel      = 0;
+      snapGoal = nearestSnap();
+    }
+  }
 
-  carousel.addEventListener('touchend', () => {
-    if (isHorizontalDrag) dragEnd();
-    dragDecided = false;
-  });
+  let lastMoved = 0;
 
-  carousel.addEventListener('touchcancel', () => {
-    dragEnd();
-    dragDecided = false;
-  });
-
-  window.addEventListener('blur', dragEnd);
+  carousel.addEventListener('pointerdown',   onPointerDown,   { passive: false });
+  carousel.addEventListener('pointermove',   onPointerMove,   { passive: false });
+  carousel.addEventListener('pointerup',     onPointerUp);
+  carousel.addEventListener('pointercancel', onPointerCancel);
 
   /* ── Card click → modal ── */
 
   carousel.addEventListener('click', e => {
-    // Ignore if the user was dragging
-    if (dragDeltaX > 12) return;
+    if (lastMoved > 12) return;
     const card = e.target.closest('.work-card');
     if (!card) return;
     openModal(card);
   });
 
   function openModal(card) {
-    const bgEl   = card.querySelector('.card-bg');
+    const bgEl    = card.querySelector('.card-bg');
     const bgClass = [...bgEl.classList].find(c => /^bg-\d+$/.test(c)) || '';
-
     document.getElementById('modalTag').textContent  = card.querySelector('.card-tag').textContent;
     document.getElementById('modalTitle').innerHTML  = card.querySelector('h3').innerHTML;
     document.getElementById('modalYear').textContent = card.querySelector('.card-year').textContent;
-
-    const vis = document.getElementById('modalVisual');
+    const vis     = document.getElementById('modalVisual');
     vis.className = 'modal-visual ' + bgClass;
-
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -237,25 +220,18 @@
   });
 
   function applyFilter(filter) {
-    // Fade out
     visibleCards.forEach(c => { c.style.transition = 'opacity 0.2s'; c.style.opacity = '0'; });
-
     setTimeout(() => {
       visibleCards = filter === 'all'
         ? [...allCards]
         : allCards.filter(c => c.dataset.category === filter);
-
-      currentAngle = 0;
-      velocity     = 0;
-      snapping     = false;
-      targetAngle  = 0;
-
+      angle    = 0;
+      vel      = 0;
+      snapGoal = null;
       layoutCards(visibleCards);
       carousel.style.transform = 'rotateY(0deg)';
-
-      // Remove inline opacity so updateFacing controls it
       visibleCards.forEach(c => { c.style.transition = ''; c.style.opacity = ''; });
-      updateFacing();
+      applyFacing();
     }, 220);
   }
 
