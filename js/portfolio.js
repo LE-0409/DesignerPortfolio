@@ -70,11 +70,8 @@
   function snapToNearest() {
     const n = visibleCards.length;
     if (n <= 1) return;
-    const step       = 360 / n;
-    // Which card index is closest to facing front (angle=0)?
-    const normalized = ((-currentAngle % 360) + 360) % 360;
-    const nearest    = Math.round(normalized / step) * step;
-    return -nearest;
+    const step = 360 / n;
+    return Math.round(currentAngle / step) * step;
   }
 
   /* ── Animation loop ── */

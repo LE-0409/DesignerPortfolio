@@ -15,7 +15,7 @@
   flex-direction: column;
   align-items: center;
   gap: 36px;
-  margin-bottom: 64px;
+  margin-bottom: 140px;
 }
 
 .section-title {
@@ -67,7 +67,6 @@
   align-items: center;
   justify-content: center;
   overflow: visible;
-  clip-path: inset(0 -9999px -9999px -9999px);
 }
 
 .cylinder-carousel {
