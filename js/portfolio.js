@@ -98,8 +98,14 @@
       velocity *= 0.91;
       if (Math.abs(velocity) < 0.25) {
         velocity = 0;
-        targetAngle = snapToNearest();
-        snapping = true;
+        const proposed = snapToNearest();
+        let   snapDiff = proposed - currentAngle;
+        if (snapDiff >  180) snapDiff -= 360;
+        if (snapDiff < -180) snapDiff += 360;
+        if (Math.abs(snapDiff) > 0.05) {
+          targetAngle = proposed;
+          snapping = true;
+        }
       }
     }
 
@@ -177,11 +183,18 @@
     dragDecided = false;
   });
 
+  carousel.addEventListener('touchcancel', () => {
+    dragEnd();
+    dragDecided = false;
+  });
+
+  window.addEventListener('blur', dragEnd);
+
   /* ── Card click → modal ── */
 
   carousel.addEventListener('click', e => {
     // Ignore if the user was dragging
-    if (dragDeltaX > 6) return;
+    if (dragDeltaX > 12) return;
     const card = e.target.closest('.work-card');
     if (!card) return;
     openModal(card);
