@@ -74,21 +74,22 @@
     const n = allCards.length;
     if (n === 0) return;
 
+    // 모바일: 인접 카드(45°) 겹침 방지를 위해 앞면 카드만 표시
+    const threshold = window.innerWidth <= 600 ? 40 : 90;
     const step = 360 / n;
+
     allCards.forEach((c, i) => {
-      // JS의 % 연산자는 음수를 반환할 수 있으므로 항상 양수를 보장하는 모듈로 연산 적용
       const world = (((angle + i * step) % 360) + 360) % 360;
       const dist  = Math.min(world, 360 - world);
 
-      if (dist >= 90) {
+      if (dist >= threshold) {
         c.style.opacity       = '0';
         c.style.pointerEvents = 'none';
         c.style.filter        = '';
       } else {
-        const t = dist / 90;
+        const t = dist / threshold;
         c.style.opacity       = String(1 - t * 0.55);
-        // 정면 근처(55도 미만)일 때만 클릭 가능
-        c.style.pointerEvents = dist < 55 ? 'auto' : 'none';
+        c.style.pointerEvents = dist < threshold * 0.6 ? 'auto' : 'none';
         c.style.filter        = `brightness(${0.55 + 0.45 * (1 - t)})`;
       }
     });
@@ -220,9 +221,11 @@
 
     const dx = e.clientX - ptrLastX;
     const dt = Math.max(e.timeStamp - ptrLastT, 1);
+    // 모바일: 감도를 높여 짧은 스와이프로 카드 전환
+    const sensitivity = window.innerWidth <= 600 ? 0.45 : 0.2;
 
-    angle  = norm(angle + dx * 0.2);
-    ptrVel = ptrVel * 0.6 + (dx * 0.2 / dt) * 0.4; // 지수 이동 평균으로 속도 계산
+    angle  = norm(angle + dx * sensitivity);
+    ptrVel = ptrVel * 0.6 + (dx * sensitivity / dt) * 0.4;
     ptrMoved += Math.abs(dx);
 
     ptrLastX = e.clientX;
