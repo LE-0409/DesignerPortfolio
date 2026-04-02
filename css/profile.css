@@ -216,6 +216,8 @@
 }
 
 @media (max-width: 480px) {
-  .section-profile { padding: 72px 19px 80px; }
+  .section-profile { padding: 72px 19px 90px; }
   .profile-photo-wrap { width: 176px; height: 176px; }
+  .scroll-indicator { display: none; }
+  .profile-name { font-size: clamp(36px, 10vw, 52px); }
 }

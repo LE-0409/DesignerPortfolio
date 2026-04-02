@@ -1,8 +1,6 @@
 (function () {
   'use strict';
 
-  const CARD_W = 320;
-
   const scene      = document.getElementById('cylinderScene');
   const carousel   = document.getElementById('cylinderCarousel');
   const modal      = document.getElementById('workModal');
@@ -41,9 +39,13 @@
 
   /* ── Cylinder geometry ── */
 
+  function getCardW() {
+    return allCards.length > 0 ? allCards[0].offsetWidth : 320;
+  }
+
   function calcRadius(n) {
     if (n <= 1) return 0;
-    return Math.round((CARD_W + 40) / (2 * Math.tan(Math.PI / n)));
+    return Math.round((getCardW() + 40) / (2 * Math.tan(Math.PI / n)));
   }
 
   // filteredData: 필터된 원본 데이터 배열.
@@ -370,5 +372,19 @@
   cardData = allCards.map(extractCardData); // 원본 데이터 추출
   layoutCards(cardData);
   requestTick(); // 초기 렌더 후 정지 상태면 루프 종료
+
+  /* ── Resize handler ── */
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      angle    = 0;
+      vel      = 0;
+      snapGoal = null;
+      layoutCards(getFilteredData(currentFilter));
+      carousel.style.transform = 'rotateY(0deg)';
+      applyFacing();
+    }, 150);
+  });
 
 })();

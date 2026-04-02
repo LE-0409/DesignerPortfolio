@@ -5,6 +5,7 @@
   flex-direction: column;
   justify-content: center;
   padding: 51px 0 38px;
+  overflow-x: hidden;
 }
 
 /* ── Header row ── */
@@ -289,4 +290,51 @@
 @media (max-width: 680px) {
   .modal-meta { padding: 60px 28px 40px; }
   .modal-close-btn { top: 18px; right: 18px; }
+}
+
+/* ── Mobile carousel ── */
+@media (max-width: 600px) {
+  .section-portfolio {
+    padding: 51px 0 32px;
+  }
+
+  .cylinder-scene {
+    height: 360px;
+    perspective: 800px;
+  }
+
+  .cylinder-carousel {
+    width: 260px;
+    height: 178px;
+  }
+
+  .work-card {
+    width: 260px;
+    height: 178px;
+  }
+
+  .card-body {
+    padding: 16px 18px;
+  }
+}
+
+@media (max-width: 380px) {
+  .cylinder-scene {
+    height: 320px;
+    perspective: 680px;
+  }
+
+  .cylinder-carousel {
+    width: 220px;
+    height: 150px;
+  }
+
+  .work-card {
+    width: 220px;
+    height: 150px;
+  }
+
+  .card-body h3 {
+    font-size: 12px;
+  }
 }

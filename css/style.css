@@ -168,6 +168,12 @@ body {
 @media (max-width: 800px) {
   .header-nav { display: none; }
   .menu-btn { display: flex; }
-  #site-header { padding: 19px 22px; }
-  #site-header.scrolled { padding: 13px 22px; }
+  #site-header {
+    padding: 16px 22px;
+    background: rgba(2, 6, 23, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  #site-header.scrolled { padding: 12px 22px; }
 }
