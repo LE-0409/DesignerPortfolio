@@ -87,6 +87,9 @@
       if (Math.abs(diff) < 0.05) {
         currentAngle = targetAngle;
         snapping = false;
+        // Normalize to [-180, 180) to prevent floating point drift
+        currentAngle = ((currentAngle % 360) + 540) % 360 - 180;
+        targetAngle  = currentAngle;
       } else {
         currentAngle += diff * 0.11;
       }
