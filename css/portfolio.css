@@ -299,39 +299,40 @@
   }
 
   .cylinder-scene {
-    height: 360px;
-    perspective: 800px;
+    height: 260px;
+    perspective: 700px;
+    overflow: hidden; /* 3D 카드가 화면 밖으로 나가지 않도록 클리핑 */
   }
 
   .cylinder-carousel {
-    width: 260px;
-    height: 178px;
+    width: calc(100vw - 48px);
+    height: 195px;
   }
 
   .work-card {
-    width: 260px;
-    height: 178px;
+    width: calc(100vw - 48px);
+    height: 195px;
   }
 
   .card-body {
-    padding: 16px 18px;
+    padding: 14px 16px;
   }
 }
 
 @media (max-width: 380px) {
   .cylinder-scene {
-    height: 320px;
-    perspective: 680px;
+    height: 220px;
+    perspective: 580px;
   }
 
   .cylinder-carousel {
-    width: 220px;
-    height: 150px;
+    width: calc(100vw - 32px);
+    height: 168px;
   }
 
   .work-card {
-    width: 220px;
-    height: 150px;
+    width: calc(100vw - 32px);
+    height: 168px;
   }
 
   .card-body h3 {

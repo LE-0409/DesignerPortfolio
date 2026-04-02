@@ -45,7 +45,12 @@
 
   function calcRadius(n) {
     if (n <= 1) return 0;
-    return Math.round((getCardW() + 40) / (2 * Math.tan(Math.PI / n)));
+    const cardW = getCardW();
+    if (window.innerWidth <= 600) {
+      // 모바일: 반경을 뷰포트 기준으로 제한해 인접 카드가 화면 안에 담기도록 함
+      return Math.round(window.innerWidth * 0.28);
+    }
+    return Math.round((cardW + 40) / (2 * Math.tan(Math.PI / n)));
   }
 
   // filteredData: 필터된 원본 데이터 배열.
