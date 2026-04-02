@@ -125,8 +125,8 @@
   function dragMove(x) {
     if (!isDragging) return;
     const dx  = x - lastX;
-    currentAngle += dx * 0.28;
-    velocity      = dx * 0.28;
+    currentAngle += dx * 0.15;
+    velocity      = dx * 0.15;
     dragDeltaX   += Math.abs(dx);
     lastX         = x;
   }
