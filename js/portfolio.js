@@ -69,9 +69,10 @@
 
   function snapToNearest() {
     const n = visibleCards.length;
-    if (n <= 1) return;
+    if (n <= 1) return currentAngle;
     const step = 360 / n;
-    return Math.round(currentAngle / step) * step;
+    const snapped = Math.round(currentAngle / step) * step;
+    return ((snapped % 360) + 540) % 360 - 180;
   }
 
   /* ── Animation loop ── */
@@ -81,15 +82,14 @@
 
   function tick() {
     if (isDragging) {
-      // Follow pointer directly
+      // Follow pointer directly via dragMove
     } else if (snapping) {
-      const diff = targetAngle - currentAngle;
+      let diff = targetAngle - currentAngle;
+      if (diff >  180) diff -= 360;
+      if (diff < -180) diff += 360;
       if (Math.abs(diff) < 0.05) {
         currentAngle = targetAngle;
         snapping = false;
-        // Normalize to [-180, 180) to prevent floating point drift
-        currentAngle = ((currentAngle % 360) + 540) % 360 - 180;
-        targetAngle  = currentAngle;
       } else {
         currentAngle += diff * 0.11;
       }
@@ -98,10 +98,13 @@
       velocity *= 0.91;
       if (Math.abs(velocity) < 0.25) {
         velocity = 0;
-        targetAngle = snapToNearest() ?? currentAngle;
+        targetAngle = snapToNearest();
         snapping = true;
       }
     }
+
+    // Normalize to [-180, 180) every frame to prevent angle drift
+    currentAngle = ((currentAngle % 360) + 540) % 360 - 180;
 
     carousel.style.transform = `rotateY(${currentAngle}deg)`;
     updateFacing();
@@ -132,8 +135,7 @@
     if (!isDragging) return;
     isDragging = false;
     carousel.classList.remove('grabbing');
-    targetAngle = snapToNearest() ?? currentAngle;
-    snapping    = true;
+    // velocity from last dragMove drives inertia; tick handles snap naturally
   }
 
   // Mouse
