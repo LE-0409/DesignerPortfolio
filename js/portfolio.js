@@ -47,8 +47,11 @@
     if (n <= 1) return 0;
     const cardW = getCardW();
     if (window.innerWidth <= 600) {
-      // 모바일: 반경을 뷰포트 기준으로 제한해 인접 카드가 화면 안에 담기도록 함
-      return Math.round(window.innerWidth * 0.28);
+      // 인접 카드(45° 위치)의 왼쪽 끝이 뷰포트 밖에서 시작하도록 반경 역산.
+      // 조건: radius × sin45° − cardW × cos45° / 2 ≥ vw / 2
+      // → radius ≥ (vw/2 + cardW × 0.354) / 0.707
+      const vw = window.innerWidth;
+      return Math.ceil((vw / 2 + cardW * 0.354) / 0.707) + 16;
     }
     return Math.round((cardW + 40) / (2 * Math.tan(Math.PI / n)));
   }
@@ -74,22 +77,20 @@
     const n = allCards.length;
     if (n === 0) return;
 
-    // 모바일: 인접 카드(45°) 겹침 방지를 위해 앞면 카드만 표시
-    const threshold = window.innerWidth <= 600 ? 40 : 90;
     const step = 360 / n;
 
     allCards.forEach((c, i) => {
       const world = (((angle + i * step) % 360) + 360) % 360;
       const dist  = Math.min(world, 360 - world);
 
-      if (dist >= threshold) {
+      if (dist >= 90) {
         c.style.opacity       = '0';
         c.style.pointerEvents = 'none';
         c.style.filter        = '';
       } else {
-        const t = dist / threshold;
+        const t = dist / 90;
         c.style.opacity       = String(1 - t * 0.55);
-        c.style.pointerEvents = dist < threshold * 0.6 ? 'auto' : 'none';
+        c.style.pointerEvents = dist < 55 ? 'auto' : 'none';
         c.style.filter        = `brightness(${0.55 + 0.45 * (1 - t)})`;
       }
     });
