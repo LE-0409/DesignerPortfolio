@@ -3,6 +3,8 @@
 
   const header     = document.getElementById('site-header');
   const menuToggle = document.getElementById('menu-toggle');
+  const sideMenu   = document.querySelector('.side-menu');
+  const menuBtn    = document.querySelector('.menu-btn');
   const sections   = document.querySelectorAll('main section[id]');
   const navLinks   = document.querySelectorAll('.header-nav .nav-link');
   const allNavLinks = document.querySelectorAll('.side-menu a, .header-nav .nav-link');
@@ -44,8 +46,6 @@
   /* ── Close side menu when clicking outside ── */
   document.addEventListener('click', e => {
     if (!menuToggle.checked) return;
-    const sideMenu = document.querySelector('.side-menu');
-    const menuBtn  = document.querySelector('.menu-btn');
     if (!sideMenu.contains(e.target) && !menuBtn.contains(e.target)) {
       menuToggle.checked = false;
     }

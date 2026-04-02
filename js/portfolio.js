@@ -112,6 +112,14 @@
   let vel      = 0;
   let snapGoal = null;
   let prevTs   = null;
+  let rafActive = false;
+
+  function requestTick() {
+    if (!rafActive) {
+      rafActive = true;
+      requestAnimationFrame(tick);
+    }
+  }
 
   function tick(ts) {
     const dt = prevTs !== null ? Math.min(ts - prevTs, 50) : 16;
@@ -136,7 +144,13 @@
 
     carousel.style.transform = `rotateY(${angle}deg)`;
     applyFacing();
-    requestAnimationFrame(tick);
+
+    if (snapGoal !== null || Math.abs(vel) >= 0.003 || ptrId !== null) {
+      requestAnimationFrame(tick);
+    } else {
+      rafActive = false;
+      prevTs    = null;
+    }
   }
 
   /* ── Input Handling ── */
@@ -191,6 +205,7 @@
 
     carousel.classList.add('grabbing');
     if (scene) scene.classList.add('grabbing');
+    requestTick();
   }
 
   function onPointerMove(e) {
@@ -242,6 +257,7 @@
       vel      = 0;
       snapGoal = nearestSnap();
     }
+    requestTick();
   }
 
   carousel.addEventListener('pointerdown',   onPointerDown);
@@ -281,9 +297,9 @@
       return;
     }
 
-    modalTag.textContent   = tagEl.textContent;
-    modalTitle.textContent = titleEl.textContent;
-    modalYear.textContent  = yearEl.textContent;
+    modalTag.textContent = tagEl.textContent;
+    modalTitle.innerHTML = titleEl.innerHTML;
+    modalYear.textContent = yearEl.textContent;
     vis.className          = 'modal-visual ' + bgClass;
 
     modal.classList.add('open');
@@ -301,17 +317,19 @@
 
   /* ── Filter Logic ── */
 
+  const filterBtns = document.querySelectorAll('.filter-btn');
+
   function getFilteredData(filter) {
     return filter === 'all'
       ? cardData
       : cardData.filter(d => d.category === filter);
   }
 
-  document.querySelectorAll('.filter-btn').forEach(btn => {
+  filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       if (btn.dataset.filter === currentFilter) return;
 
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      filterBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentFilter = btn.dataset.filter;
       applyFilter(currentFilter);
@@ -351,6 +369,6 @@
   allCards = [...document.querySelectorAll('.work-card')];
   cardData = allCards.map(extractCardData); // 원본 데이터 추출
   layoutCards(cardData);
-  requestAnimationFrame(tick);
+  requestTick(); // 초기 렌더 후 정지 상태면 루프 종료
 
 })();
