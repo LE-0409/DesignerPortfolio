@@ -3,6 +3,7 @@
 
   const CARD_W = 500;
 
+  const scene      = document.getElementById('cylinderScene');
   const carousel   = document.getElementById('cylinderCarousel');
   const modal      = document.getElementById('workModal');
   const modalClose = document.getElementById('modalClose');
@@ -142,6 +143,7 @@
     snapGoal = null;
 
     carousel.classList.add('grabbing');
+    if (scene) scene.classList.add('grabbing');
   }
 
   function onPointerMove(e) {
@@ -172,6 +174,7 @@
     lastMoved = ptrMoved;
     ptrId     = null;
     carousel.classList.remove('grabbing');
+    if (scene) scene.classList.remove('grabbing');
 
     if (cancelled) {
       vel      = 0;
@@ -193,6 +196,12 @@
   carousel.addEventListener('lostpointercapture', e => {
     if (e.pointerId === ptrId) releaseDrag(true);
   });
+
+  // cylinder-scene(부모)에도 pointerdown 등록:
+  // 3D 투영된 측면 카드 영역이 carousel의 2D 경계(500px) 밖에 위치할 때
+  // carousel 이벤트가 도달하지 않는 문제를 방지한다.
+  // ptrId !== null 가드로 carousel 이벤트와 이중 실행되지 않는다.
+  if (scene) scene.addEventListener('pointerdown', onPointerDown);
 
   window.addEventListener('blur', () => {
     if (ptrId !== null) releaseDrag(true);

@@ -67,6 +67,13 @@
   align-items: center;
   justify-content: center;
   overflow: visible;
+  cursor: grab;
+  user-select: none;
+  touch-action: pan-y;
+}
+
+.cylinder-scene.grabbing {
+  cursor: grabbing;
 }
 
 .cylinder-carousel {
