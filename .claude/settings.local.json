@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(ls /c/Users/dldms/Desktop/Web/DesignerPortfolio/*.html)"
+      "Bash(ls /c/Users/dldms/Desktop/Web/DesignerPortfolio/*.html)",
+      "Bash(node:*)"
     ]
   }
 }

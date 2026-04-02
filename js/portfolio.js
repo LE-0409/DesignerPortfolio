@@ -46,13 +46,6 @@
   function calcRadius(n) {
     if (n <= 1) return 0;
     const cardW = getCardW();
-    if (window.innerWidth <= 600) {
-      // 인접 카드(45° 위치)의 왼쪽 끝이 뷰포트 밖에서 시작하도록 반경 역산.
-      // 조건: radius × sin45° − cardW × cos45° / 2 ≥ vw / 2
-      // → radius ≥ (vw/2 + cardW × 0.354) / 0.707
-      const vw = window.innerWidth;
-      return Math.ceil((vw / 2 + cardW * 0.354) / 0.707) + 16;
-    }
     return Math.round((cardW + 40) / (2 * Math.tan(Math.PI / n)));
   }
 
@@ -222,11 +215,9 @@
 
     const dx = e.clientX - ptrLastX;
     const dt = Math.max(e.timeStamp - ptrLastT, 1);
-    // 모바일: 감도를 높여 짧은 스와이프로 카드 전환
-    const sensitivity = window.innerWidth <= 600 ? 0.45 : 0.2;
 
-    angle  = norm(angle + dx * sensitivity);
-    ptrVel = ptrVel * 0.6 + (dx * sensitivity / dt) * 0.4;
+    angle  = norm(angle + dx * 0.2);
+    ptrVel = ptrVel * 0.6 + (dx * 0.2 / dt) * 0.4;
     ptrMoved += Math.abs(dx);
 
     ptrLastX = e.clientX;

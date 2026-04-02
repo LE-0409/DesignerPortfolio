@@ -298,46 +298,28 @@
     padding: 51px 0 32px;
   }
 
+  /* overflow: visible 유지 — section의 overflow-x: hidden 이 수평 스크롤을 막음 */
   .cylinder-scene {
-    /* 카드 높이(vw비례) + 상하 여백 */
-    height: calc((100vw - 48px) * 218 / 320 + 40px);
-    perspective: 1000px;
-    overflow: hidden; /* 뷰포트 밖 카드 클리핑 */
+    height: calc(75vw * 218 / 320 + 40px);
+    perspective: 900px;
   }
 
   .cylinder-carousel {
-    width: calc(100vw - 48px);
-    height: calc((100vw - 48px) * 218 / 320);
+    width: calc(75vw);
+    height: calc(75vw * 218 / 320);
   }
 
   .work-card {
-    width: calc(100vw - 48px);
-    height: calc((100vw - 48px) * 218 / 320);
+    width: calc(75vw);
+    height: calc(75vw * 218 / 320);
   }
 
   .card-body {
     padding: 14px 16px;
   }
-}
-
-@media (max-width: 380px) {
-  .cylinder-scene {
-    height: calc((100vw - 32px) * 218 / 320 + 40px);
-    perspective: 860px;
-  }
-
-  .cylinder-carousel {
-    width: calc(100vw - 32px);
-    height: calc((100vw - 32px) * 218 / 320);
-  }
-
-  .work-card {
-    width: calc(100vw - 32px);
-    height: calc((100vw - 32px) * 218 / 320);
-  }
 
   .card-body h3 {
-    font-size: 12px;
+    font-size: 13px;
   }
 }
 
