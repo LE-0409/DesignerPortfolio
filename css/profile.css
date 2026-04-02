@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 120px 80px 100px;
+  padding: 96px 64px 80px;
   overflow: hidden;
 }
 
@@ -12,8 +12,8 @@
   position: absolute;
   top: 10%;
   left: -8%;
-  width: 700px;
-  height: 700px;
+  width: 560px;
+  height: 560px;
   background: radial-gradient(circle, rgba(0, 207, 255, 0.07) 0%, transparent 65%);
   pointer-events: none;
 }
@@ -22,8 +22,8 @@
   display: grid;
   grid-template-columns: 1fr 1.3fr;
   align-items: center;
-  gap: 80px;
-  max-width: 1160px;
+  gap: 64px;
+  max-width: 928px;
   margin: 0 auto;
   width: 100%;
 }
@@ -31,8 +31,8 @@
 /* ── Photo ── */
 .profile-photo-wrap {
   position: relative;
-  width: 380px;
-  height: 380px;
+  width: 304px;
+  height: 304px;
   justify-self: center;
 }
 
@@ -51,8 +51,8 @@
   top: 22%;
   left: 50%;
   transform: translateX(-50%);
-  width: 120px;
-  height: 120px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   background: rgba(0, 207, 255, 0.13);
   border: 1px solid rgba(0, 207, 255, 0.2);
@@ -60,11 +60,11 @@
 
 .photo-placeholder-body {
   position: absolute;
-  bottom: -30px;
+  bottom: -24px;
   left: 50%;
   transform: translateX(-50%);
-  width: 260px;
-  height: 220px;
+  width: 208px;
+  height: 176px;
   border-radius: 50% 50% 0 0;
   background: rgba(0, 207, 255, 0.08);
   border: 1px solid rgba(0, 207, 255, 0.12);
@@ -79,12 +79,12 @@
 }
 
 .ring-1 {
-  top: -16px; left: -16px; right: -16px; bottom: -16px;
+  top: -13px; left: -13px; right: -13px; bottom: -13px;
   animation: ring-breathe 4s ease-in-out infinite;
 }
 
 .ring-2 {
-  top: -36px; left: -36px; right: -36px; bottom: -36px;
+  top: -29px; left: -29px; right: -29px; bottom: -29px;
   border-color: rgba(0, 207, 255, 0.05);
   animation: ring-breathe 4s ease-in-out infinite 1s;
 }
@@ -96,19 +96,19 @@
 
 /* ── Info ── */
 .profile-eyebrow {
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 5px;
+  letter-spacing: 4px;
   color: var(--accent);
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .profile-name {
-  font-size: clamp(54px, 6.5vw, 88px);
+  font-size: clamp(43px, 5.2vw, 70px);
   font-weight: 800;
   line-height: 1.02;
-  letter-spacing: -2px;
-  margin-bottom: 30px;
+  letter-spacing: -1.6px;
+  margin-bottom: 24px;
 }
 
 .profile-name em {
@@ -117,25 +117,25 @@
 }
 
 .profile-bio {
-  font-size: 15px;
+  font-size: 12px;
   line-height: 1.9;
   color: var(--text-muted);
-  margin-bottom: 38px;
-  max-width: 440px;
+  margin-bottom: 30px;
+  max-width: 352px;
 }
 
 .profile-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 52px;
+  gap: 8px;
+  margin-bottom: 42px;
 }
 
 .profile-tags span {
-  padding: 7px 18px;
+  padding: 6px 14px;
   border: 1px solid rgba(0, 207, 255, 0.28);
   border-radius: 100px;
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 700;
   letter-spacing: 2px;
   color: var(--accent);
@@ -149,38 +149,38 @@
 .btn-cta {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 15px 38px;
+  gap: 8px;
+  padding: 12px 30px;
   background: var(--accent);
   color: var(--bg);
   text-decoration: none;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 800;
-  letter-spacing: 2.5px;
+  letter-spacing: 2px;
   text-transform: uppercase;
   border-radius: 100px;
   transition: transform 0.25s, box-shadow 0.25s;
 }
 
 .btn-cta:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 40px rgba(0, 207, 255, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 32px rgba(0, 207, 255, 0.35);
 }
 
 /* ── Scroll indicator ── */
 .scroll-indicator {
   position: absolute;
-  bottom: 44px;
-  left: 80px;
+  bottom: 35px;
+  left: 64px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 11px;
 }
 
 .scroll-line {
   width: 1px;
-  height: 64px;
+  height: 51px;
   background: linear-gradient(to bottom, var(--accent), transparent);
   animation: scroll-drop 2.4s ease-in-out infinite;
   transform-origin: top;
@@ -193,8 +193,8 @@
 }
 
 .scroll-indicator span {
-  font-size: 9px;
-  letter-spacing: 4px;
+  font-size: 7px;
+  letter-spacing: 3px;
   color: var(--text-muted);
   writing-mode: vertical-lr;
   text-transform: uppercase;
@@ -202,13 +202,13 @@
 
 /* ── Responsive ── */
 @media (max-width: 1000px) {
-  .section-profile { padding: 100px 48px 100px; }
+  .section-profile { padding: 80px 38px 80px; }
   .profile-grid {
     grid-template-columns: 1fr;
     text-align: center;
-    gap: 52px;
+    gap: 42px;
   }
-  .profile-photo-wrap { width: 280px; height: 280px; }
+  .profile-photo-wrap { width: 224px; height: 224px; }
   .profile-bio { margin-left: auto; margin-right: auto; }
   .profile-tags { justify-content: center; }
   .btn-cta { margin: 0 auto; }
@@ -216,6 +216,6 @@
 }
 
 @media (max-width: 480px) {
-  .section-profile { padding: 90px 24px 100px; }
-  .profile-photo-wrap { width: 220px; height: 220px; }
+  .section-profile { padding: 72px 19px 80px; }
+  .profile-photo-wrap { width: 176px; height: 176px; }
 }

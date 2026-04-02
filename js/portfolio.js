@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const CARD_W = 500;
+  const CARD_W = 400;
 
   const scene      = document.getElementById('cylinderScene');
   const carousel   = document.getElementById('cylinderCarousel');

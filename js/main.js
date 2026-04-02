@@ -23,7 +23,7 @@
   function highlightActiveNav() {
     let current = '';
     sections.forEach(section => {
-      if (window.scrollY >= section.offsetTop - 140) {
+      if (window.scrollY >= section.offsetTop - 112) {
         current = section.id;
       }
     });
