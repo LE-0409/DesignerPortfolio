@@ -153,8 +153,30 @@
     if (ptrId !== null) return;
     if (e.pointerType === 'mouse' && e.button !== 0) return;
 
-    // setPointerCapture 전에 실제 클릭된 카드를 기록
-    ptrDownCard = e.target.closest('.work-card');
+    // e.target은 pointerdown이 scene에서 발생할 때 scene 자체를 가리키므로
+    // elementFromPoint로 클릭 좌표의 실제 카드를 직접 찾는다
+    const hit = document.elementFromPoint(e.clientX, e.clientY);
+    ptrDownCard = hit ? hit.closest('.work-card') : null;
+
+    // 폴백: 캐러셀이 ±90° 회전 시(카드 2·6 정면) 캐러셀 자체의 2D 히트박스가
+    // 사실상 소멸해 elementFromPoint가 카드를 찾지 못한다.
+    // 클릭이 씬 중심(카드 물리적 크기 160×109px 이내)에 있을 때만 정면 카드로 보정한다.
+    if (!ptrDownCard && scene) {
+      const sr = scene.getBoundingClientRect();
+      const cx = sr.left + sr.width  / 2;
+      const cy = sr.top  + sr.height / 2;
+      if (Math.abs(e.clientX - cx) < 160 && Math.abs(e.clientY - cy) < 109) {
+        const n    = allCards.length;
+        const step = 360 / n;
+        let best   = { dist: Infinity, card: null };
+        allCards.forEach((c, i) => {
+          const world = (((angle + i * step) % 360) + 360) % 360;
+          const dist  = Math.min(world, 360 - world);
+          if (dist < best.dist) best = { dist, card: c };
+        });
+        if (best.dist < 15) ptrDownCard = best.card;
+      }
+    }
 
     carousel.setPointerCapture(e.pointerId);
 
@@ -210,13 +232,9 @@
     }
 
     // 드래그 거리가 12px 미만이면 탭/클릭으로 처리
-    // ptrDownCard가 null인 경우(3D 히트 테스팅 실패)는 정면 카드로 폴백
-    if (ptrMoved <= 12) {
-      const target = card || getFrontCard();
-      if (target) {
-        openModal(target);
-        return;
-      }
+    if (ptrMoved <= 12 && card) {
+      openModal(card);
+      return;
     }
 
     vel = ptrVel;
@@ -245,22 +263,6 @@
   });
 
   /* ── Interaction ── */
-
-  // 현재 angle 기준으로 정면에 있는 카드를 반환
-  // (3D 히트 테스팅 실패 시 폴백용)
-  function getFrontCard() {
-    const n = allCards.length;
-    if (n === 0) return null;
-    const step = 360 / n;
-    let best = { dist: Infinity, card: null };
-    allCards.forEach((c, i) => {
-      const world = (((angle + i * step) % 360) + 360) % 360;
-      const dist  = Math.min(world, 360 - world);
-      if (dist < best.dist) best = { dist, card: c };
-    });
-    // 스냅 완료된 정면 카드만 허용 (30° 이내)
-    return best.dist < 30 ? best.card : null;
-  }
 
   function openModal(card) {
     const bgEl    = card.querySelector('.card-bg');
