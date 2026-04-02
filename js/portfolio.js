@@ -172,10 +172,21 @@
 
   let lastMoved = 0;
 
-  carousel.addEventListener('pointerdown',   onPointerDown,   { passive: false });
-  carousel.addEventListener('pointermove',   onPointerMove,   { passive: false });
-  carousel.addEventListener('pointerup',     onPointerUp);
-  carousel.addEventListener('pointercancel', onPointerCancel);
+  carousel.addEventListener('pointerdown',      onPointerDown,   { passive: false });
+  carousel.addEventListener('pointermove',      onPointerMove,   { passive: false });
+  carousel.addEventListener('pointerup',        onPointerUp);
+  carousel.addEventListener('pointercancel',    onPointerCancel);
+
+  // Safety: fires whenever pointer capture is released for any reason
+  // (covers cases where pointercancel is not dispatched, e.g. tab switch on some browsers)
+  carousel.addEventListener('lostpointercapture', e => {
+    if (e.pointerId === ptrId) releaseDrag(true);
+  });
+
+  // Safety: force-release drag when window loses focus
+  window.addEventListener('blur', () => {
+    if (ptrId !== null) releaseDrag(true);
+  });
 
   /* ── Card click → modal ── */
 
