@@ -147,10 +147,14 @@
   let ptrVel   = 0;
   let ptrMoved = 0;
   let lastMoved = 0;
+  let ptrDownCard = null; // pointerdown 시점의 카드 (캡처 전 e.target 기준)
 
   function onPointerDown(e) {
     if (ptrId !== null) return;
     if (e.pointerType === 'mouse' && e.button !== 0) return;
+
+    // setPointerCapture 전에 실제 클릭된 카드를 기록
+    ptrDownCard = e.target.closest('.work-card');
 
     carousel.setPointerCapture(e.pointerId);
 
@@ -193,7 +197,9 @@
 
   function releaseDrag(cancelled) {
     lastMoved = ptrMoved;
-    ptrId     = null;
+    const card = ptrDownCard;
+    ptrId       = null;
+    ptrDownCard = null;
     carousel.classList.remove('grabbing');
     if (scene) scene.classList.remove('grabbing');
 
@@ -201,6 +207,16 @@
       vel      = 0;
       snapGoal = nearestSnap();
       return;
+    }
+
+    // 드래그 거리가 12px 미만이면 탭/클릭으로 처리
+    // ptrDownCard가 null인 경우(3D 히트 테스팅 실패)는 정면 카드로 폴백
+    if (ptrMoved <= 12) {
+      const target = card || getFrontCard();
+      if (target) {
+        openModal(target);
+        return;
+      }
     }
 
     vel = ptrVel;
@@ -230,13 +246,21 @@
 
   /* ── Interaction ── */
 
-  carousel.addEventListener('click', e => {
-    // 드래그 거리가 12px 이상이면 클릭으로 간주하지 않음 (오작동 방지)
-    if (lastMoved > 12) return;
-    const card = e.target.closest('.work-card');
-    if (!card) return;
-    openModal(card);
-  });
+  // 현재 angle 기준으로 정면에 있는 카드를 반환
+  // (3D 히트 테스팅 실패 시 폴백용)
+  function getFrontCard() {
+    const n = allCards.length;
+    if (n === 0) return null;
+    const step = 360 / n;
+    let best = { dist: Infinity, card: null };
+    allCards.forEach((c, i) => {
+      const world = (((angle + i * step) % 360) + 360) % 360;
+      const dist  = Math.min(world, 360 - world);
+      if (dist < best.dist) best = { dist, card: c };
+    });
+    // 스냅 완료된 정면 카드만 허용 (30° 이내)
+    return best.dist < 30 ? best.card : null;
+  }
 
   function openModal(card) {
     const bgEl    = card.querySelector('.card-bg');
