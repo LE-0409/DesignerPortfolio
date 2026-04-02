@@ -301,7 +301,7 @@
   /* overflow: visible 유지 — section의 overflow-x: hidden 이 수평 스크롤을 막음 */
   .cylinder-scene {
     height: calc(65vw * 218 / 320 + 40px);
-    perspective: 780px;
+    perspective: 900px;
   }
 
   .cylinder-carousel {

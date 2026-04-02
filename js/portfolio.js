@@ -46,6 +46,14 @@
   function calcRadius(n) {
     if (n <= 1) return 0;
     const cardW = getCardW();
+    if (window.innerWidth <= 600) {
+      // 앞면 카드 표시 너비 = cardW × (perspective / (perspective − r)) ≤ vw − sideMargin
+      // r = perspective × (1 − cardW / (vw − sideMargin))
+      const vw          = window.innerWidth;
+      const perspective = 900; // CSS와 동일 값
+      const sideMargin  = 48;  // 좌우 합산 여백 (24px × 2)
+      return Math.floor(perspective * (1 - cardW / (vw - sideMargin)));
+    }
     return Math.round((cardW + 40) / (2 * Math.tan(Math.PI / n)));
   }
 
