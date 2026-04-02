@@ -14,44 +14,65 @@
   }
 
   let allCards      = [];
-  let visibleCards  = [];
+  let cardData      = []; // 원본 카드 데이터 (DOM 독립적)
   let currentFilter = 'all';
-  let filterTimeout = null; // 필터 레이스 컨디션 방지용
+  let filterTimeout = null;
+
+  /* ── Card data extraction ── */
+
+  function extractCardData(card) {
+    const bgEl = card.querySelector('.card-bg');
+    return {
+      category: card.dataset.category,
+      bgClass:  bgEl ? ([...bgEl.classList].find(c => /^bg-\d+$/.test(c)) || '') : '',
+      tag:      card.querySelector('.card-tag').textContent,
+      title:    card.querySelector('h3').innerHTML,
+      year:     card.querySelector('.card-year').textContent,
+    };
+  }
+
+  function applyDataToSlot(slot, data) {
+    slot.dataset.category = data.category;
+    slot.querySelector('.card-bg').className     = 'card-bg ' + data.bgClass;
+    slot.querySelector('.card-tag').textContent  = data.tag;
+    slot.querySelector('h3').innerHTML           = data.title;
+    slot.querySelector('.card-year').textContent = data.year;
+  }
 
   /* ── Cylinder geometry ── */
 
   function calcRadius(n) {
     if (n <= 1) return 0;
-    // 카드가 원통형으로 배치될 때 필요한 반지름 계산
     return Math.round((CARD_W + 40) / (2 * Math.tan(Math.PI / n)));
   }
 
-  function layoutCards(cards) {
-    const n = cards.length;
-    allCards.forEach(c => (c.style.display = 'none'));
-    
-    // 0 나누기 방지: 카드가 없을 경우 실행 중단
-    if (n === 0) return;
+  // filteredData: 필터된 원본 데이터 배열.
+  // 슬롯 수(allCards.length)는 항상 고정 — 부족하면 반복 배치해 ALL과 동일한 원통 연출.
+  function layoutCards(filteredData) {
+    if (filteredData.length === 0) return;
 
+    const n    = allCards.length;
     const r    = calcRadius(n);
     const step = 360 / n;
-    
-    cards.forEach((c, i) => {
-      c.style.display   = '';
-      c.style.transform = `rotateY(${i * step}deg) translateZ(${r}px)`;
+
+    allCards.forEach((slot, i) => {
+      const data = filteredData[i % filteredData.length];
+      applyDataToSlot(slot, data);
+      slot.style.display   = '';
+      slot.style.transform = `rotateY(${i * step}deg) translateZ(${r}px)`;
     });
   }
 
   function applyFacing() {
-    const n = visibleCards.length;
+    const n = allCards.length;
     if (n === 0) return;
-    
+
     const step = 360 / n;
-    visibleCards.forEach((c, i) => {
+    allCards.forEach((c, i) => {
       // JS의 % 연산자는 음수를 반환할 수 있으므로 항상 양수를 보장하는 모듈로 연산 적용
       const world = (((angle + i * step) % 360) + 360) % 360;
       const dist  = Math.min(world, 360 - world);
-      
+
       if (dist >= 90) {
         c.style.opacity       = '0';
         c.style.pointerEvents = 'none';
@@ -79,7 +100,7 @@
   }
 
   function nearestSnap() {
-    const n = visibleCards.length;
+    const n = allCards.length;
     if (n <= 1) return 0;
     const step = 360 / n;
     return norm(Math.round(angle / step) * step);
@@ -87,9 +108,9 @@
 
   /* ── Physics / animation loop ── */
 
-  let angle    = 0;     // 현재 회전각
-  let vel      = 0;     // 관성 속도 (deg/ms)
-  let snapGoal = null;  // 스냅 목표 지점
+  let angle    = 0;
+  let vel      = 0;
+  let snapGoal = null;
   let prevTs   = null;
 
   function tick(ts) {
@@ -107,7 +128,7 @@
     } else if (vel !== 0) {
       angle = norm(angle + vel * dt);
       vel  *= Math.pow(0.988, dt); // 프레임 독립적 감속
-      if (Math.abs(vel) < 0.003) { 
+      if (Math.abs(vel) < 0.003) {
         vel      = 0;
         snapGoal = nearestSnap();
       }
@@ -125,12 +146,12 @@
   let ptrLastT = 0;
   let ptrVel   = 0;
   let ptrMoved = 0;
-  let lastMoved = 0; // 클릭 판정용
+  let lastMoved = 0;
 
   function onPointerDown(e) {
     if (ptrId !== null) return;
     if (e.pointerType === 'mouse' && e.button !== 0) return;
-    
+
     carousel.setPointerCapture(e.pointerId);
 
     ptrId    = e.pointerId;
@@ -139,7 +160,7 @@
     ptrVel   = 0;
     ptrMoved = 0;
 
-    vel      = 0; 
+    vel      = 0;
     snapGoal = null;
 
     carousel.classList.add('grabbing');
@@ -152,8 +173,8 @@
     const dx = e.clientX - ptrLastX;
     const dt = Math.max(e.timeStamp - ptrLastT, 1);
 
-    angle    = norm(angle + dx * 0.2);
-    ptrVel   = ptrVel * 0.6 + (dx * 0.2 / dt) * 0.4; // 지수 이동 평균으로 속도 계산
+    angle  = norm(angle + dx * 0.2);
+    ptrVel = ptrVel * 0.6 + (dx * 0.2 / dt) * 0.4; // 지수 이동 평균으로 속도 계산
     ptrMoved += Math.abs(dx);
 
     ptrLastX = e.clientX;
@@ -234,11 +255,10 @@
       return;
     }
 
-    modalTag.textContent  = tagEl.textContent;
+    modalTag.textContent   = tagEl.textContent;
     modalTitle.textContent = titleEl.textContent;
-    modalYear.textContent = yearEl.textContent;
-
-    vis.className = 'modal-visual ' + bgClass;
+    modalYear.textContent  = yearEl.textContent;
+    vis.className          = 'modal-visual ' + bgClass;
 
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -255,10 +275,16 @@
 
   /* ── Filter Logic ── */
 
+  function getFilteredData(filter) {
+    return filter === 'all'
+      ? cardData
+      : cardData.filter(d => d.category === filter);
+  }
+
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       if (btn.dataset.filter === currentFilter) return;
-      
+
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentFilter = btn.dataset.filter;
@@ -270,43 +296,35 @@
     // 1. 기존 대기 중인 필터 타이머 취소 (레이스 컨디션 방지)
     if (filterTimeout) clearTimeout(filterTimeout);
 
-    // 2. 페이드 아웃 애니메이션
-    visibleCards.forEach(c => { 
-      c.style.transition = 'opacity 0.2s'; 
-      c.style.opacity = '0'; 
-    });
+    // 2. 페이드 아웃
+    allCards.forEach(c => { c.style.transition = 'opacity 0.2s'; c.style.opacity = '0'; });
 
     filterTimeout = setTimeout(() => {
-      // 3. 필터링 데이터 적용
-      visibleCards = filter === 'all'
-        ? [...allCards]
-        : allCards.filter(c => c.dataset.category === filter);
+      const filtered = getFilteredData(filter);
 
-      // 4. 상태 초기화
+      // 3. 상태 초기화
       angle     = 0;
       vel       = 0;
       snapGoal  = null;
-      lastMoved = 0; 
-      
-      layoutCards(visibleCards);
+      lastMoved = 0;
+
+      // 4. 슬롯에 필터된 데이터를 반복 배치 — 항상 ALL과 동일한 원통 연출
+      layoutCards(filtered);
       carousel.style.transform = 'rotateY(0deg)';
-      
-      // 5. 스타일 복구 및 페이드 인
-      visibleCards.forEach(c => { 
-        c.style.transition = ''; 
-        c.style.opacity = ''; 
-      });
+
+      // 5. 페이드 인
+      allCards.forEach(c => { c.style.transition = ''; c.style.opacity = ''; });
       applyFacing();
-      
+
       filterTimeout = null;
     }, 220);
   }
 
   /* ── Initialization ── */
 
-  allCards     = [...document.querySelectorAll('.work-card')];
-  visibleCards = [...allCards];
-  layoutCards(visibleCards);
+  allCards = [...document.querySelectorAll('.work-card')];
+  cardData = allCards.map(extractCardData); // 원본 데이터 추출
+  layoutCards(cardData);
   requestAnimationFrame(tick);
 
 })();
