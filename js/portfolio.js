@@ -11,6 +11,8 @@
     return;
   }
 
+  const VISIBLE_SLOTS = 8; // 실린더에 배치할 슬롯 수 (카드 수와 무관하게 고정)
+
   let allCards      = [];
   let cardData      = []; // 원본 카드 데이터 (DOM 독립적)
   let currentFilter = 'all';
@@ -44,32 +46,35 @@
   }
 
   function calcRadius(n) {
-    if (n <= 1) return 0;
+    // 슬롯 수를 VISIBLE_SLOTS로 고정해 카드 수가 늘어도 반지름(= 카드 크기)이 변하지 않게 함
+    const slots = Math.min(n, VISIBLE_SLOTS);
+    if (slots <= 1) return 0;
     const cardW = getCardW();
     if (window.innerWidth <= 600) {
-      // 카드 겹침 방지: 인접 카드 간 chord ≥ cardW 가 되는 최소 반지름
-      // chord = 2r·sin(π/n) ≥ cardW  →  r ≥ cardW / (2·sin(π/n))
-      const rMin      = Math.ceil(cardW / (2 * Math.sin(Math.PI / n)));
-      // perspective 기반 이상값(화면 꽉 채움 기준)도 함께 고려해 큰 쪽 사용
+      const rMin      = Math.ceil(cardW / (2 * Math.sin(Math.PI / slots)));
       const vw          = window.innerWidth;
       const perspective = 900;
       const sideMargin  = 48;
       const rDesired  = Math.floor(perspective * (1 - cardW / (vw - sideMargin)));
       return Math.max(rMin, rDesired);
     }
-    return Math.round((cardW + 40) / (2 * Math.tan(Math.PI / n)));
+    return Math.round((cardW + 40) / (2 * Math.tan(Math.PI / slots)));
   }
 
   // filteredData: 필터된 원본 데이터 배열.
-  // 슬롯 수(allCards.length)는 항상 고정 — 부족하면 반복 배치해 ALL과 동일한 원통 연출.
+  // 슬롯 수는 VISIBLE_SLOTS로 고정 — 데이터가 더 많으면 반복 배치, 적으면 순환.
   function layoutCards(filteredData) {
     if (filteredData.length === 0) return;
 
-    const n    = allCards.length;
+    const n    = Math.min(allCards.length, VISIBLE_SLOTS);
     const r    = calcRadius(n);
     const step = 360 / n;
 
     allCards.forEach((slot, i) => {
+      if (i >= n) {
+        slot.style.display = 'none';
+        return;
+      }
       const data = filteredData[i % filteredData.length];
       applyDataToSlot(slot, data);
       slot.style.display   = '';
@@ -78,12 +83,12 @@
   }
 
   function applyFacing() {
-    const n = allCards.length;
+    const n = Math.min(allCards.length, VISIBLE_SLOTS);
     if (n === 0) return;
 
     const step = 360 / n;
 
-    allCards.forEach((c, i) => {
+    allCards.slice(0, n).forEach((c, i) => {
       const world = (((angle + i * step) % 360) + 360) % 360;
       const dist  = Math.min(world, 360 - world);
 
@@ -113,7 +118,7 @@
   }
 
   function nearestSnap() {
-    const n = allCards.length;
+    const n = Math.min(allCards.length, VISIBLE_SLOTS);
     if (n <= 1) return 0;
     const step = 360 / n;
     return norm(Math.round(angle / step) * step);
@@ -193,10 +198,10 @@
       const cx = sr.left + sr.width  / 2;
       const cy = sr.top  + sr.height / 2;
       if (Math.abs(e.clientX - cx) < 160 && Math.abs(e.clientY - cy) < 109) {
-        const n    = allCards.length;
+        const n    = Math.min(allCards.length, VISIBLE_SLOTS);
         const step = 360 / n;
         let best   = { dist: Infinity, card: null };
-        allCards.forEach((c, i) => {
+        allCards.slice(0, n).forEach((c, i) => {
           const world = (((angle + i * step) % 360) + 360) % 360;
           const dist  = Math.min(world, 360 - world);
           if (dist < best.dist) best = { dist, card: c };
