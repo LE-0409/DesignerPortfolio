@@ -20,10 +20,18 @@
 
 ## 스킬 태그
 
-- Branding
-- UI / UX
-- Motion
+- Graphic
 - 3D
+- Visual
+- Animation
+- UI / UX
+graphic
+3d
+visual
+animation
+uiux
+
+
 
 ---
 
@@ -43,36 +51,36 @@
 
 ## 포트폴리오 카드
 
-카테고리 값은 소문자로 작성합니다: `branding` / `uiux` / `motion` / `3d`
+카테고리 값은 소문자로 작성합니다: `graphic` / `3d` / `visual` / `animation` / `uiux`
 태그는 카드에 표시되는 대문자 텍스트입니다.
 제목에서 `/`는 줄바꿈입니다.
 
 ### 카드 1
-- **카테고리**: branding
+- **카테고리**: graphic
 - **태그**: GRAPHIC CALENDAR DESIGN
 - **제목**: EVERYDAY TYPO CALENDAR DESIGN
 - **연도**: 2023
 
 ### 카드 2
-- **카테고리**: branding
+- **카테고리**: graphic
 - **태그**: FONT DESIGN
 - **제목**: SATIN WRAP
 - **연도**: 2024
 
 ### 카드 3
-- **카테고리**: branding
+- **카테고리**: visual
 - **태그**: CHARACTER DESIGN
 - **제목**: REPBEAT 캐릭터 디자인
 - **연도**: 2024
 
 ### 카드 4
-- **카테고리**: branding
+- **카테고리**: visual
 - **태그**: KOREAN MOTIVE DESIGN
 - **제목**: 꽃 피우는 자개
 - **연도**: 2024
 
 ### 카드 5
-- **카테고리**: branding
+- **카테고리**: visual
 - **태그**: PATTERN DESIGN
 - **제목**: 나만의 바닷속 세상
 - **연도**: 2024
@@ -90,31 +98,31 @@
 - **연도**: 2024
 
 ### 카드 8
-- **카테고리**: branding
+- **카테고리**: graphic
 - **태그**: LOGO DESIGN
 - **제목**: 과잠 로고 디자인
 - **연도**: 2025
 
 ### 카드 9
-- **카테고리**: branding
+- **카테고리**: graphic
 - **태그**: GRAPHIC DESIGN
 - **제목**: 서울 블루 웨이브
 - **연도**: 2025
 
 ### 카드 10
-- **카테고리**: branding
+- **카테고리**: graphic
 - **태그**: BRANDING DESIGN
 - **제목**: NHD
 - **연도**: 2025
 
 ### 카드 11
-- **카테고리**: motion
+- **카테고리**: animation
 - **태그**: ROTOSCOPING ANIMATION
 - **제목**: CHUING POP!
 - **연도**: 2025
 
 ### 카드 12
-- **카테고리**: motion
+- **카테고리**: animation
 - **태그**: KINETIC TYPOGRAPHY
 - **제목**: JUMP
 - **연도**: 2025
@@ -126,7 +134,13 @@
 - **연도**: 2025
 
 ### 카드 14
-- **카테고리**: branding
+- **카테고리**: graphic
 - **태그**: GRAPHICS CAPSTONE
 - **제목**: 같이 걷는 여행-안동
 - **연도**: 2025
+
+### 카드 15
+- **카테고리**: graphic
+- **태그**: Game graphics
+- **제목**: Rhythm Burger Factory
+- **연도**: 2026
