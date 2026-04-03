@@ -47,12 +47,15 @@
     if (n <= 1) return 0;
     const cardW = getCardW();
     if (window.innerWidth <= 600) {
-      // 앞면 카드 표시 너비 = cardW × (perspective / (perspective − r)) ≤ vw − sideMargin
-      // r = perspective × (1 − cardW / (vw − sideMargin))
+      // 카드 겹침 방지: 인접 카드 간 chord ≥ cardW 가 되는 최소 반지름
+      // chord = 2r·sin(π/n) ≥ cardW  →  r ≥ cardW / (2·sin(π/n))
+      const rMin      = Math.ceil(cardW / (2 * Math.sin(Math.PI / n)));
+      // perspective 기반 이상값(화면 꽉 채움 기준)도 함께 고려해 큰 쪽 사용
       const vw          = window.innerWidth;
-      const perspective = 900; // CSS와 동일 값
-      const sideMargin  = 48;  // 좌우 합산 여백 (24px × 2)
-      return Math.floor(perspective * (1 - cardW / (vw - sideMargin)));
+      const perspective = 900;
+      const sideMargin  = 48;
+      const rDesired  = Math.floor(perspective * (1 - cardW / (vw - sideMargin)));
+      return Math.max(rMin, rDesired);
     }
     return Math.round((cardW + 40) / (2 * Math.tan(Math.PI / n)));
   }
