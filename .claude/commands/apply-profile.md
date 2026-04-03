@@ -29,11 +29,11 @@
 `.filter-bar` 내부를 카드 목록에서 사용된 카테고리를 기반으로 재생성한다.
 - 첫 번째 버튼은 항상 `ALL` (`data-filter="all"`, `active` 클래스 포함)
 - 이후 버튼은 카드 목록에 등장하는 카테고리를 **첫 등장 순서**대로 중복 없이 생성한다.
-- 버튼의 표시 텍스트는 해당 카테고리의 첫 번째 카드 태그 텍스트를 사용한다.
+- 버튼의 표시 텍스트는 카테고리 값을 대문자로 변환해 사용한다. (예: `branding` → `BRANDING`, `uiux` → `UIUX`)
 
 ```html
 <button class="filter-btn active" data-filter="all">ALL</button>
-<button class="filter-btn" data-filter="[카테고리]">[태그 텍스트]</button>
+<button class="filter-btn" data-filter="[카테고리]">[카테고리 대문자]</button>
 ```
 
 ### 포트폴리오 카드
