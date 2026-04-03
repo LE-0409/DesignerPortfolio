@@ -300,18 +300,18 @@
 
   /* overflow: visible 유지 — section의 overflow-x: hidden 이 수평 스크롤을 막음 */
   .cylinder-scene {
-    height: calc(65vw * 218 / 320 + 40px);
+    height: calc(58vw * 218 / 320 + 40px);
     perspective: 900px;
   }
 
   .cylinder-carousel {
-    width: calc(65vw);
-    height: calc(65vw * 218 / 320);
+    width: calc(58vw);
+    height: calc(58vw * 218 / 320);
   }
 
   .work-card {
-    width: calc(65vw);
-    height: calc(65vw * 218 / 320);
+    width: calc(58vw);
+    height: calc(58vw * 218 / 320);
   }
 
   .card-body {
