@@ -7,7 +7,7 @@
 
 ## 기본 정보
 
-- **이름**: Kim Mirae
+- **이름**: NAMJIHYUN
 - **직함**: VISUAL DESIGNER
 ### 바이오
 개수 제한 없이 추가하거나 줄일 수 있습니다. 각 항목은 `<br>`로 연결됩니다.
@@ -28,14 +28,14 @@
 
 ## 연락처
 
-- **이메일**: designer@email.com
-- **전화**: +82 10-1234-5678
+- **이메일**: g0628race@email.com
+- **전화**: +82 10-4601-0643
 
 ### 소셜 링크
 개수 제한 없이 추가하거나 줄일 수 있습니다. 형식: `- [표시 이름]: [URL]`
 
 - **Behance**: #
-- **Instagram**: #
+- **Instagram**: https://www.instagram.com/xx0628xx/
 - **LinkedIn**: #
 
 ---
@@ -48,48 +48,84 @@
 
 ### 카드 1
 - **카테고리**: branding
-- **태그**: BRANDING
-- **제목**: Visual Identity / Project A
-- **연도**: 2024
+- **태그**: GRAPHIC
+- **제목**: EVERYDAY TYPO CALENDAR DESIGN
+- **연도**: 2023
 
 ### 카드 2
-- **카테고리**: uiux
-- **태그**: UI / UX
-- **제목**: Mobile App / Redesign
+- **카테고리**: branding
+- **태그**: GRAPHIC
+- **제목**: SATIN WRAP
 - **연도**: 2024
 
 ### 카드 3
-- **카테고리**: motion
-- **태그**: MOTION
-- **제목**: Title Sequence / Campaign
-- **연도**: 2023
+- **카테고리**: branding
+- **태그**: VISUAL
+- **제목**: REPBEAT 캐릭터 디자인
+- **연도**: 2024
 
 ### 카드 4
-- **카테고리**: 3d
-- **태그**: 3D
-- **제목**: Product / Visualization
-- **연도**: 2023
+- **카테고리**: branding
+- **태그**: VISUAL
+- **제목**: 꽃 피우는 자개
+- **연도**: 2024
 
 ### 카드 5
 - **카테고리**: branding
-- **태그**: BRANDING
-- **제목**: Brand System / Project B
-- **연도**: 2023
+- **태그**: VISUAL
+- **제목**: 나만의 바닷속 세상
+- **연도**: 2024
 
 ### 카드 6
-- **카테고리**: uiux
-- **태그**: UI / UX
-- **제목**: Dashboard / Design System
-- **연도**: 2022
-
-### 카드 7
-- **카테고리**: motion
-- **태그**: MOTION
-- **제목**: Brand Film / Opening
-- **연도**: 2022
-
-### 카드 8
 - **카테고리**: 3d
 - **태그**: 3D
-- **제목**: Abstract / Sculpture Series
-- **연도**: 2022
+- **제목**: Drugs
+- **연도**: 2024
+
+### 카드 7
+- **카테고리**: 3d
+- **태그**: 3D
+- **제목**: 다보탑
+- **연도**: 2024
+
+### 카드 8
+- **카테고리**: branding
+- **태그**: GRAPHIC
+- **제목**: 과잠 로고 디자인
+- **연도**: 2025
+
+### 카드 9
+- **카테고리**: branding
+- **태그**: GRAPHIC
+- **제목**: 서울 블루 웨이브
+- **연도**: 2025
+
+### 카드 10
+- **카테고리**: branding
+- **태그**: GRAPHIC
+- **제목**: NHD
+- **연도**: 2025
+
+### 카드 11
+- **카테고리**: motion
+- **태그**: ANIMATION
+- **제목**: CHUING POP!
+- **연도**: 2025
+
+### 카드 12
+- **카테고리**: motion
+- **태그**: ANIMATION
+- **제목**: JUMP
+- **연도**: 2025
+
+### 카드 13
+- **카테고리**: uiux
+- **태그**: UX/UI
+- **제목**: 밀메이트
+- **연도**: 2025
+
+### 카드 14
+- **카테고리**: branding
+- **태그**: GRAPHIC
+- **제목**: 같이 걷는 여행-안동
+- **연도**: 2025

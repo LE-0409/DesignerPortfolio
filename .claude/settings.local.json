@@ -3,7 +3,9 @@
     "allow": [
       "Bash(ls /c/Users/dldms/Desktop/Web/DesignerPortfolio/*.html)",
       "Bash(node:*)",
-      "Skill(update-config)"
+      "Skill(update-config)",
+      "Bash(python3:*)",
+      "Bash(iconv -f UTF-8 -t UTF-8 \"C:\\\\Users\\\\dldms\\\\Desktop\\\\Web\\\\DesignerPortfolio\\\\test.md\")"
     ]
   }
 }
